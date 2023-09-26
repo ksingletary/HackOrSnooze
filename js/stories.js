@@ -15,26 +15,88 @@ async function getAndShowStoriesOnStart() {
 /**
  * A render method to render HTML for an individual Story instance
  * - story: an instance of Story
+ * - showDeleteBtn: show delete button?
  *
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDeleteBtn = false) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+
+  // if a user is logged in, show favorite/not-favorite star
+  const showStar = Boolean(currentUser);
+
   return $(`
       <li id="${story.storyId}">
+        <div>
+        ${showDeleteBtn ? getDeleteBtnHTML() : ""}
+        ${showStar ? getStarHTML(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
         <small class="story-hostname">(${hostName})</small>
-        <small class="story-author">by ${story.author}</small>
-        <small class="story-user">posted by ${story.username}</small>
+        <div class="story-author">by ${story.author}</div>
+        <div class="story-user">posted by ${story.username}</div>
+        </div>
       </li>
     `);
 }
 
+/** Make delete button HTML for story */
+
+function getDeleteBtnHTML() {
+  return `
+      <span class="trash-can">
+        <i class="fas fa-trash-alt"></i>
+      </span>`;
+}
+
+/** Make favorite/not-favorite star for story */
+
+function getStarHTML(story, user) {
+  const isFavorite = user.isFavorite(story);
+  const starType = isFavorite ? "fas" : "far";
+  return `
+      <span class="star">
+        <i class="${starType} fa-star"></i>
+      </span>`;
+}
+
+/** Gets list of stories from server, generates their HTML, and puts on page. */
+
+function putStoriesOnPage() {
+  console.debug("putStoriesOnPage");
+
+  $allStoriesList.empty();
+
+  // loop through all of our stories and generate HTML for them
+  for (let story of storyList.stories) {
+    const $story = generateStoryMarkup(story);
+    $allStoriesList.append($story);
+  }
+
+  $allStoriesList.show();
+}
+
+/** Handle deleting a story. */
+
+async function deleteStory(evt) {
+  console.debug("deleteStory");
+
+  const $closestLi = $(evt.target).closest("li");
+  const storyId = $closestLi.attr("id");
+
+  await storyList.removeStory(currentUser, storyId);
+
+  // re-generate story list
+  await putUserStoriesOnPage();
+}
+
+$ownStories.on("click", ".trash-can", deleteStory);
+
+/** Handle submitting new story form. */
 
 async function submitNewStory(evt) {
   console.debug("submitNewStory");
@@ -59,57 +121,9 @@ async function submitNewStory(evt) {
 
 $submitForm.on("submit", submitNewStory);
 
-function getDeleteBtnHTML() {
-  return `
-      <span class="trash-can">
-        <i class="fas fa-trash-alt"></i>
-      </span>`;
-}
-
-
-function getStarHTML(story, user) {
-  const isFavorite = user.isFavorite(story);
-  const starType = isFavorite ? "fas" : "far";
-  return `
-      <span class="star">
-        <i class="${starType} fa-star"></i>
-      </span>`;
-}
-
-
-
-/** Gets list of stories from server, generates their HTML, and puts on page. */
-
-function putStoriesOnPage() {
-  console.debug("putStoriesOnPage");
-
-  $allStoriesList.empty();
-
-  // loop through all of our stories and generate HTML for them
-  for (let story of storyList.stories) {
-    const $story = generateStoryMarkup(story);
-    $allStoriesList.append($story);
-  }
-
-  $allStoriesList.show();
-}
-
-
-async function deleteStory(evt) {
-  console.debug("deleteStory");
-
-  const $closestLi = $(evt.target).closest("li");
-  const storyId = $closestLi.attr("id");
-
-  await storyList.removeStory(currentUser, storyId);
-
-  // re-generate story list
-  await putUserStoriesOnPage();
-}
-
-$ownStories.on("click", ".trash-can", deleteStory);
-
-
+/******************************************************************************
+ * Functionality for list of user's own stories
+ */
 
 function putUserStoriesOnPage() {
   console.debug("putUserStoriesOnPage");
@@ -128,6 +142,12 @@ function putUserStoriesOnPage() {
 
   $ownStories.show();
 }
+
+/******************************************************************************
+ * Functionality for favorites list and starr/un-starr a story
+ */
+
+/** Put favorites list on page. */
 
 function putFavoritesListOnPage() {
   console.debug("putFavoritesListOnPage");
