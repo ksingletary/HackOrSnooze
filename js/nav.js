@@ -14,20 +14,18 @@ function navAllStories(evt) {
 
 $body.on("click", "#nav-all", navAllStories);
 
-/** Show story submit form on clicking story "submit" */
 
-function navSubmitStoryClick(evt) {
+function navSubmitStoryClick(evt) {// show story submit form when submit clicked */
   console.debug("navSubmitStoryClick", evt);
-  hidePageComponents();
-  $allStoriesList.show();
+  hidePageComponents(); //hiding redundant HTML elems
+  $allStoriesList.show(); //show list of stories 
   $submitForm.show();
 }
 
 $navSubmitStory.on("click", navSubmitStoryClick);
 
-/** Show favorite stories on click on "favorites" */
 
-function navFavoritesClick(evt) {
+function navFavoritesClick(evt) {// display favorite stories when clicking favs
   console.debug("navFavoritesClick", evt);
   hidePageComponents();
   putFavoritesListOnPage();
@@ -35,30 +33,27 @@ function navFavoritesClick(evt) {
 
 $body.on("click", "#nav-favorites", navFavoritesClick);
 
-/** Show My Stories on clicking "my stories" */
 
-function navMyStories(evt) {
+function navMyStories(evt) { //show my stories after clicking
   console.debug("navMyStories", evt);
-  hidePageComponents();
+  hidePageComponents(); //hiding other page HTML
   putUserStoriesOnPage();
   $ownStories.show();
 }
 
 $body.on("click", "#nav-my-stories", navMyStories);
 
-/** Show login/signup on click on "login" */
 
 function navLoginClick(evt) {
-  console.debug("navLoginClick", evt);
+  console.debug("navLoginClick", evt); // show login-signup when clicking
   hidePageComponents();
-  $loginForm.show();
-  $signupForm.show();
+  $loginForm.show(); //showing login form
+  $signupForm.show(); //showing signup as well
   $storiesContainer.hide()
 }
 
 $navLogin.on("click", navLoginClick);
 
-/** Hide everything but profile on click on "profile" */
 
 function navProfileClick(evt) {
   console.debug("navProfileClick", evt);

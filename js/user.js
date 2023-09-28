@@ -121,9 +121,9 @@ async function updateUIOnUserLogin() {
   $storiesContainer.show()
 }
 
-/** Show a "user profile" part of page built from the current user's info. */
 
-function generateUserProfile() {
+function generateUserProfile() { //display user profile part of page built from the current user's info
+
   console.debug("generateUserProfile");
 
   $("#profile-name").text(currentUser.name);

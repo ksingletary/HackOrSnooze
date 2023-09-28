@@ -11,7 +11,6 @@ const $ownStories = $("#my-stories");
 const $storiesContainer = $("#stories-container")
 
 
-// selector that finds all three story lists
 const $storiesLists = $(".stories-list");
 
 const $loginForm = $("#login-form");
