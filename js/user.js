@@ -19,7 +19,15 @@ async function login(evt) {
 
   // User.login retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
+  // If credentials are incorrect, will prompt an alert with message
   currentUser = await User.login(username, password);
+  if(!(currentUser instanceof User)){
+    alert(currentUser);
+    $("#login-form input").val("");
+    return;
+  }
+
+  
 
   $loginForm.trigger("reset");
 
@@ -29,7 +37,10 @@ async function login(evt) {
 
 $loginForm.on("submit", login);
 
-/** Handle signup form submission. */
+/** Handle signup form submission.
+ * Should have error handling for instances
+ * where username is taken or credentials are wrong
+ */
 
 async function signup(evt) {
   console.debug("signup", evt);
@@ -39,9 +50,17 @@ async function signup(evt) {
   const username = $("#signup-username").val();
   const password = $("#signup-password").val();
 
+  //Get a list of usernames, then compare to see if the new user is the same
+
   // User.signup retrieves user info from API and returns User instance
   // which we'll make the globally-available, logged-in user.
+  // Will also return a message if usersname is already taken
   currentUser = await User.signup(username, password, name);
+  if(!(currentUser instanceof User)){
+    alert(currentUser);
+    $("#signup-username").val("");
+    return;
+  }
 
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
@@ -97,7 +116,7 @@ function saveUserCredentialsInLocalStorage() {
 }
 
 /******************************************************************************
- * General UI stuff about users & profiles
+ * General UI stuff about users
  */
 
 /** When a user signs up or registers, we want to set up the UI for them:
@@ -107,26 +126,11 @@ function saveUserCredentialsInLocalStorage() {
  * - generate the user profile part of the page
  */
 
-async function updateUIOnUserLogin() {
+function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
-
   hidePageComponents();
-
-  // re-display stories (so that "favorite" stars can appear)
   putStoriesOnPage();
-  $allStoriesList.show();
+  // $allStoriesList.show();
 
   updateNavOnLogin();
-  generateUserProfile();
-  $storiesContainer.show()
-}
-
-
-function generateUserProfile() { //display user profile part of page built from the current user's info
-
-  console.debug("generateUserProfile");
-
-  $("#profile-name").text(currentUser.name);
-  $("#profile-username").text(currentUser.username);
-  $("#profile-account-date").text(currentUser.createdAt.slice(0, 10));
 }

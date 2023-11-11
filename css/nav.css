@@ -4,7 +4,7 @@ nav {
   display: flex;
   background-color: #ff6600;
   align-items: center;
-  padding: 25px 20px;
+  padding: 20px;
   border-radius: 3px 3px 0 0;
 }
 
@@ -12,18 +12,14 @@ nav {
   font-weight: bold;
 }
 
-.main-nav-links {
-  margin: 0 10px;
-  font-size: 20px;
-  justify-content: center;
-  align-items: center;
-}
-
 .nav-link {
   font-size: 0.85rem;
   margin: 0 3px;
 }
 
+.main-nav-links{
+  text-align: left;
+}
 .nav-right {
   margin-left: auto;
   text-align: right;
